@@ -2,6 +2,7 @@ import { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar, Legend } from "recharts";
 import { supabase } from "./supabase";
 import AuthPage from "./AuthPage";
+import { AgeVerificationModal, PreventionBanner, Badge18 } from "./Legal";
 
 const SPORTS = ["Football", "Tennis", "Basketball", "Rugby", "Baseball", "MMA", "Autre"];
 const STATUTS = ["Gagné", "Perdu", "En cours"];
@@ -1079,13 +1080,19 @@ export default function App() {
   if (!session) return <AuthPage />;
 
   return (
-    <div style={{ background: "#0f172a", minHeight: "100vh", fontFamily: "'Inter',sans-serif", color: "#e2e8f0", padding: "24px 20px" }}>
+    <>
+      <AgeVerificationModal />
+      <PreventionBanner />
+    <div style={{ background: "#0f172a", minHeight: "100vh", fontFamily: "'Inter',sans-serif", color: "#e2e8f0", padding: "24px 20px 72px" }}>
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
 
         {/* Header */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 28 }}>
           <div>
-            <h1 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: "#f1f5f9" }}>📈 BetTracker</h1>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 2 }}>
+              <h1 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: "#f1f5f9" }}>📈 BetTracker</h1>
+              <Badge18 size={28} />
+            </div>
             <p style={{ margin: 0, color: "#64748b", fontSize: 13 }}>Suivi de vos paris sportifs</p>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -1559,5 +1566,6 @@ export default function App() {
         )}
       </div>
     </div>
+    </>
   );
 }

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { supabase } from "./supabase";
+import { AgeVerificationModal, PreventionBanner, Badge18 } from "./Legal";
 
 const card      = { background: "#1e293b", borderRadius: 12, padding: 28 };
 const inp       = { background: "#0f172a", border: "1px solid #334155", borderRadius: 8, padding: "10px 14px", color: "#e2e8f0", width: "100%", fontSize: 14, boxSizing: "border-box" };
@@ -78,13 +79,19 @@ export default function AuthPage() {
   };
 
   return (
-    <div style={{ background: "#0f172a", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Inter',sans-serif", color: "#e2e8f0", padding: 20 }}>
+    <>
+      <AgeVerificationModal />
+      <PreventionBanner />
+    <div style={{ background: "#0f172a", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Inter',sans-serif", color: "#e2e8f0", padding: "20px 20px 60px" }}>
       <div style={{ width: "100%", maxWidth: 420 }}>
 
         {/* Logo */}
         <div style={{ textAlign: "center", marginBottom: 32 }}>
           <p style={{ fontSize: 48, margin: "0 0 8px" }}>📈</p>
-          <h1 style={{ margin: "0 0 4px", fontSize: 28, fontWeight: 800, color: "#f1f5f9" }}>BetTracker</h1>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, marginBottom: 4 }}>
+            <h1 style={{ margin: 0, fontSize: 28, fontWeight: 800, color: "#f1f5f9" }}>BetTracker</h1>
+            <Badge18 size={32} />
+          </div>
           <p style={{ margin: 0, fontSize: 14, color: "#64748b" }}>Suivi intelligent de vos paris sportifs</p>
         </div>
 
@@ -171,5 +178,6 @@ export default function AuthPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }
