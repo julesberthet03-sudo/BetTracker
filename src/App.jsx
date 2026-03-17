@@ -1296,7 +1296,7 @@ export default function App() {
 
         {/* Tabs */}
         <div style={{ display: "flex", gap: 8, marginBottom: isMob ? 16 : 24, overflowX: "auto", WebkitOverflowScrolling: "touch", scrollbarWidth: "none", flexWrap: "nowrap", marginLeft: isMob ? -12 : 0, marginRight: isMob ? -12 : 0, paddingLeft: isMob ? 12 : 0, paddingRight: isMob ? 12 : 0 }}>
-          {[["dashboard","📊","📊 Dashboard"],["classement","🏆","🏆 Classement"],["communaute","💬","💬 Communauté"],["calculatrice","🧮","🧮 Calculatrice"]].map(([t, emoji, label]) => (
+          {[["dashboard","📊","📊 Dashboard"],["calculatrice","🧮","🧮 Calculatrice"],["communaute","💬","💬 Communauté"],["classement","🏆","🏆 Classement"]].map(([t, emoji, label]) => (
             <button key={t} onClick={() => setActiveTab(t)}
               style={{ background: activeTab === t ? "#6366f1" : "#1e293b", color: activeTab === t ? "#fff" : "#94a3b8", border: "none", borderRadius: 8, padding: isMob ? "10px 16px" : "8px 20px", cursor: "pointer", fontWeight: 600, fontSize: isMob ? 13 : 14, whiteSpace: "nowrap", flexShrink: 0, minHeight: 44 }}>
               {label}
