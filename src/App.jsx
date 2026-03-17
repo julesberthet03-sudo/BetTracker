@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from "react";
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar, Legend } from "recharts";
+import { LineChart, Line, AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar, Legend } from "recharts";
 import { supabase } from "./supabase";
 import AuthPage from "./AuthPage";
 import { AgeVerificationModal, PreventionBanner, Badge18 } from "./Legal";
@@ -1358,16 +1358,48 @@ export default function App() {
               ))}
             </div>
             <div style={{ display: "grid", gridTemplateColumns: isMob ? "1fr" : "1fr 1fr", gap: isMob ? 12 : 16, marginBottom: 16 }}>
-              <div style={card}>
-                <p style={{ margin: "0 0 12px", fontWeight: 600, fontSize: 14 }}>📈 Évolution du Bankroll</p>
-                <ResponsiveContainer width="100%" height={isMob ? 150 : 200}>
-                  <LineChart data={bankrollData}>
-                    <XAxis dataKey="date" tick={{ fill: "#64748b", fontSize: isMob ? 10 : 11 }} />
-                    <YAxis tick={{ fill: "#64748b", fontSize: isMob ? 10 : 11 }} width={isMob ? 40 : 60} />
-                    <Tooltip contentStyle={{ background: "#1e293b", border: "1px solid #334155", borderRadius: 8 }} />
-                    <Line type="monotone" dataKey="bank" stroke="#6366f1" strokeWidth={2} dot={{ r: 3, fill: "#6366f1" }} />
-                  </LineChart>
-                </ResponsiveContainer>
+              <div style={{ ...card, padding: isMob ? 0 : 20, borderRadius: isMob ? 0 : 12, marginLeft: isMob ? -12 : 0, marginRight: isMob ? -12 : 0, overflow: "hidden" }}>
+                {isMob ? (
+                  /* Mobile: immersive header + area chart */
+                  <>
+                    <div style={{ padding: "16px 20px 8px" }}>
+                      <p style={{ margin: "0 0 2px", fontSize: 12, color: "#64748b" }}>📈 Évolution du Bankroll</p>
+                      <p style={{ margin: 0, fontSize: 32, fontWeight: 800, color: "#a5b4fc", lineHeight: 1.1 }}>
+                        {(bankroll.starting + stats.profit).toFixed(2)} €
+                      </p>
+                      <p style={{ margin: "4px 0 0", fontSize: 12, color: stats.profit >= 0 ? "#10b981" : "#f43f5e", fontWeight: 600 }}>
+                        {stats.profit >= 0 ? "+" : ""}{stats.profit.toFixed(2)} € depuis le départ
+                      </p>
+                    </div>
+                    <ResponsiveContainer width="100%" height={250}>
+                      <AreaChart data={bankrollData} margin={{ top: 8, right: 0, left: 0, bottom: 0 }}>
+                        <defs>
+                          <linearGradient id="bankGrad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%"  stopColor="#6366f1" stopOpacity={0.35} />
+                            <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+                          </linearGradient>
+                        </defs>
+                        <XAxis dataKey="date" tick={{ fill: "#64748b", fontSize: 12 }} axisLine={false} tickLine={false} />
+                        <YAxis tick={{ fill: "#64748b", fontSize: 12 }} width={48} axisLine={false} tickLine={false} />
+                        <Tooltip contentStyle={{ background: "#1e293b", border: "1px solid #6366f155", borderRadius: 8, fontSize: 13 }} formatter={v => [`${v} €`, "Bankroll"]} />
+                        <Area type="monotone" dataKey="bank" stroke="#6366f1" strokeWidth={2.5} fill="url(#bankGrad)" dot={{ r: 3, fill: "#6366f1", strokeWidth: 0 }} activeDot={{ r: 5, fill: "#a5b4fc" }} />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </>
+                ) : (
+                  /* Desktop: original line chart */
+                  <>
+                    <p style={{ margin: "0 0 12px", fontWeight: 600, fontSize: 14 }}>📈 Évolution du Bankroll</p>
+                    <ResponsiveContainer width="100%" height={200}>
+                      <LineChart data={bankrollData}>
+                        <XAxis dataKey="date" tick={{ fill: "#64748b", fontSize: 11 }} />
+                        <YAxis tick={{ fill: "#64748b", fontSize: 11 }} />
+                        <Tooltip contentStyle={{ background: "#1e293b", border: "1px solid #334155", borderRadius: 8 }} />
+                        <Line type="monotone" dataKey="bank" stroke="#6366f1" strokeWidth={2} dot={{ r: 3, fill: "#6366f1" }} />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </>
+                )}
               </div>
               <div style={card}>
                 <p style={{ margin: "0 0 12px", fontWeight: 600, fontSize: 14 }}>🏅 Paris par Sport</p>
