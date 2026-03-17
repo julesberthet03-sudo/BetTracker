@@ -10,6 +10,17 @@ const COLORS = ["#6366f1", "#22d3ee", "#f59e0b", "#10b981", "#f43f5e", "#a78bfa"
 const SPORT_ICONS = { Football: "⚽", Tennis: "🎾", Basketball: "🏀", Rugby: "🏉", Baseball: "⚾", MMA: "🥊", Autre: "🎲" };
 const COMMUNITY_COLORS = ["#6366f1","#10b981","#f59e0b","#f43f5e","#22d3ee","#a78bfa","#34d399","#fb923c"];
 
+// ─── Responsive hook ──────────────────────────────────────────────────────────
+function useWindowWidth() {
+  const [w, setW] = useState(() => (typeof window !== "undefined" ? window.innerWidth : 1200));
+  useEffect(() => {
+    const h = () => setW(window.innerWidth);
+    window.addEventListener("resize", h, { passive: true });
+    return () => window.removeEventListener("resize", h);
+  }, []);
+  return w;
+}
+
 const card = { background: "#1e293b", borderRadius: 12, padding: 20 };
 const inp = { background: "#0f172a", border: "1px solid #334155", borderRadius: 8, padding: "8px 12px", color: "#e2e8f0", width: "100%", fontSize: 14, boxSizing: "border-box" };
 const btnPrimary = { background: "#6366f1", color: "#fff", border: "none", borderRadius: 8, padding: "9px 20px", cursor: "pointer", fontWeight: 600, fontSize: 14 };
@@ -35,6 +46,7 @@ const val  = col => ({ fontWeight:700, fontSize:14, color: col });
 
 // ── 1. Probabilité ────────────────────────────────────────────────────────────
 function ToolProb() {
+  const mob = useWindowWidth() <= 480;
   const [cotes, setCotes] = useState([{ id: 1, value: "" }]);
   const [mise, setMise]   = useState("");
   const add = () => { if (cotes.length < 6) setCotes(p => [...p, { id: Date.now(), value: "" }]); };
@@ -47,7 +59,7 @@ function ToolProb() {
   const profit = gain && mise ? (parseFloat(gain) - parseFloat(mise)).toFixed(2) : null;
 
   return (
-    <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:20 }}>
+    <div style={{ display:"grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap:20 }}>
       <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
         <div style={card}>
           <p style={{ margin:"0 0 16px", fontWeight:700, fontSize:16 }}>🎯 Saisir les cotes</p>
@@ -129,6 +141,7 @@ function ToolProb() {
 
 // ── 2. Dutching ───────────────────────────────────────────────────────────────
 function ToolDutch() {
+  const mob = useWindowWidth() <= 480;
   const [total, setTotal]   = useState("");
   const [sels, setSels]     = useState([{ id:1, odds:"" }, { id:2, odds:"" }]);
   const addSel = () => { if (sels.length < 6) setSels(p => [...p, { id:Date.now(), odds:"" }]); };
@@ -147,7 +160,7 @@ function ToolDutch() {
   const guaranteedProfit = results ? guaranteedReturn - totalAmt : null;
 
   return (
-    <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:20 }}>
+    <div style={{ display:"grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap:20 }}>
       <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
         <div style={card}>
           <p style={{ margin:"0 0 4px", fontWeight:700, fontSize:16 }}>🎯 Dutching</p>
@@ -211,6 +224,7 @@ function ToolDutch() {
 
 // ── 3. Surebet ────────────────────────────────────────────────────────────────
 function ToolSure() {
+  const mob = useWindowWidth() <= 480;
   const [total, setTotal] = useState("");
   const [o1, setO1] = useState("");
   const [oN, setON] = useState("");
@@ -232,7 +246,7 @@ function ToolSure() {
   const roi    = profit && totalAmt ? (profit / totalAmt) * 100 : null;
 
   return (
-    <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:20 }}>
+    <div style={{ display:"grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap:20 }}>
       <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
         <div style={card}>
           <p style={{ margin:"0 0 4px", fontWeight:700, fontSize:16 }}>🔒 Surebet</p>
@@ -290,6 +304,7 @@ function ToolSure() {
 
 // ── 4. Stake Splitter ─────────────────────────────────────────────────────────
 function ToolSplit() {
+  const mob = useWindowWidth() <= 480;
   const [total, setTotal] = useState("");
   const [bks, setBks]     = useState([{ id:1, name:"", odds:"" }, { id:2, name:"", odds:"" }]);
   const addBk = () => { if (bks.length < 5) setBks(p => [...p, { id:Date.now(), name:"", odds:"" }]); };
@@ -307,7 +322,7 @@ function ToolSplit() {
   const totalReturn = results ? results.reduce((a, b) => a + b.stake * b.o, 0) / valid.length : null;
 
   return (
-    <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:20 }}>
+    <div style={{ display:"grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap:20 }}>
       <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
         <div style={card}>
           <p style={{ margin:"0 0 4px", fontWeight:700, fontSize:16 }}>✂️ Stake Splitter</p>
@@ -365,6 +380,7 @@ function ToolSplit() {
 // ── 5. Live Odds ──────────────────────────────────────────────────────────────
 // ── 6. Profit Target ──────────────────────────────────────────────────────────
 function ToolTarget() {
+  const mob = useWindowWidth() <= 480;
   const [profit, setProfit]   = useState("");
   const [odds, setOdds]       = useState("");
   const [monthly, setMonthly] = useState("");
@@ -382,7 +398,7 @@ function ToolTarget() {
   const betsYearly  = betsMonthly ? betsMonthly * 12 : null;
 
   return (
-    <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:20 }}>
+    <div style={{ display:"grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap:20 }}>
       <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
         <div style={card}>
           <p style={{ margin:"0 0 4px", fontWeight:700, fontSize:16 }}>💰 Profit Target</p>
@@ -438,6 +454,7 @@ function ToolTarget() {
 
 // ── 7. ROI Calculator ─────────────────────────────────────────────────────────
 function ToolROI() {
+  const mob = useWindowWidth() <= 480;
   const [staked, setStaked]   = useState("");
   const [returned, setRet]    = useState("");
   const [nbBets, setNbBets]   = useState("");
@@ -460,7 +477,7 @@ function ToolROI() {
   const rating = ready ? getRating(roiPct) : null;
 
   return (
-    <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:20 }}>
+    <div style={{ display:"grid", gridTemplateColumns: mob ? "1fr" : "1fr 1fr", gap:20 }}>
       <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
         <div style={card}>
           <p style={{ margin:"0 0 4px", fontWeight:700, fontSize:16 }}>📉 ROI Calculator</p>
@@ -518,15 +535,16 @@ function ToolROI() {
 
 // ── Shell ─────────────────────────────────────────────────────────────────────
 function Calculatrice() {
+  const mob = useWindowWidth() <= 480;
   const [tool, setTool] = useState("prob");
   return (
     <div style={{ display:"flex", flexDirection:"column", gap:20 }}>
       {/* Tool selector */}
-      <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
+      <div style={{ display:"flex", gap:6, flexWrap: mob ? "nowrap" : "wrap", overflowX: mob ? "auto" : "visible", WebkitOverflowScrolling: "touch", scrollbarWidth: "none", paddingBottom: mob ? 4 : 0 }}>
         {CALC_TOOLS.map(t => (
           <button key={t.id} onClick={() => setTool(t.id)}
-            style={{ padding:"8px 14px", borderRadius:8, border:`1px solid ${tool===t.id ? "#6366f1" : "#334155"}`, background: tool===t.id ? "#6366f122" : "#1e293b", color: tool===t.id ? "#a5b4fc" : "#64748b", cursor:"pointer", fontWeight: tool===t.id ? 700 : 400, fontSize:13 }}>
-            {t.icon} {t.label}
+            style={{ padding:"8px 14px", borderRadius:8, border:`1px solid ${tool===t.id ? "#6366f1" : "#334155"}`, background: tool===t.id ? "#6366f122" : "#1e293b", color: tool===t.id ? "#a5b4fc" : "#64748b", cursor:"pointer", fontWeight: tool===t.id ? 700 : 400, fontSize:13, whiteSpace:"nowrap", flexShrink:0 }}>
+            {mob ? t.icon : `${t.icon} ${t.label}`}
           </button>
         ))}
       </div>
@@ -548,6 +566,7 @@ function Calculatrice() {
 
 // ─── Historique déroulant ─────────────────────────────────────────────────────
 function HistoriqueDeroulant({ bets, onEdit, onDelete }) {
+  const mob = useWindowWidth() <= 480;
   const [open, setOpen] = useState(false);
   const [filterS, setFilterS] = useState("Tous");
   const [filterSt, setFilterSt] = useState("Tous");
@@ -572,19 +591,21 @@ function HistoriqueDeroulant({ bets, onEdit, onDelete }) {
       {open && (
         <div style={{ borderTop: "1px solid #334155" }}>
           {/* Filtres */}
-          <div style={{ display: "flex", gap: 10, padding: "12px 16px", flexWrap: "wrap", background: "#0f172a" }}>
+          <div style={{ display: "flex", gap: mob ? 6 : 10, padding: mob ? "10px 12px" : "12px 16px", flexWrap: "wrap", background: "#0f172a" }}>
             <input
-              style={{ ...inp, flex: 1, minWidth: 140 }}
+              style={{ ...inp, flex: 1, minWidth: mob ? 0 : 140, minHeight: 44 }}
               placeholder="Rechercher un match..."
               value={search}
               onChange={e => setSearch(e.target.value)}
             />
-            <select style={{ ...inp, width: "auto" }} value={filterS} onChange={e => setFilterS(e.target.value)}>
-              {["Tous", ...SPORTS].map(s => <option key={s}>{s}</option>)}
-            </select>
-            <select style={{ ...inp, width: "auto" }} value={filterSt} onChange={e => setFilterSt(e.target.value)}>
-              {["Tous", ...STATUTS].map(s => <option key={s}>{s}</option>)}
-            </select>
+            <div style={{ display: "flex", gap: 6, width: mob ? "100%" : "auto" }}>
+              <select style={{ ...inp, flex: 1, minHeight: 44 }} value={filterS} onChange={e => setFilterS(e.target.value)}>
+                {["Tous", ...SPORTS].map(s => <option key={s}>{s}</option>)}
+              </select>
+              <select style={{ ...inp, flex: 1, minHeight: 44 }} value={filterSt} onChange={e => setFilterSt(e.target.value)}>
+                {["Tous", ...STATUTS].map(s => <option key={s}>{s}</option>)}
+              </select>
+            </div>
           </div>
 
           {/* Liste */}
@@ -652,6 +673,7 @@ const FAKE_PLAYERS = [
 ];
 
 function Classement({ pseudo, stats, bets, joinedCommunities }) {
+  const mob = useWindowWidth() <= 480;
   const [filter, setFilter] = useState("roi");
   const [mode, setMode] = useState("general");
   const [selectedCommId, setSelectedCommId] = useState(null);
@@ -702,10 +724,10 @@ function Classement({ pseudo, stats, bets, joinedCommunities }) {
       </div>
 
       {/* Mode général / communauté */}
-      <div style={{ display: "flex", gap: 8 }}>
-        {[["general","🌐 Classement général"],["communaute","🏘️ Classement communauté"]].map(([val, label]) => (
+      <div style={{ display: "flex", gap: 8, overflowX: mob ? "auto" : "visible", WebkitOverflowScrolling: "touch", scrollbarWidth: "none" }}>
+        {[["general", mob ? "🌐 Général" : "🌐 Classement général"],["communaute", mob ? "🏘️ Communauté" : "🏘️ Classement communauté"]].map(([val, label]) => (
           <button key={val} onClick={() => { setMode(val); setSelectedCommId(joinedCommunities[0]?.id ?? null); }}
-            style={{ background: mode === val ? "#6366f1" : "#1e293b", color: mode === val ? "#fff" : "#94a3b8", border: "none", borderRadius: 8, padding: "9px 20px", cursor: "pointer", fontWeight: 700, fontSize: 14 }}>
+            style={{ background: mode === val ? "#6366f1" : "#1e293b", color: mode === val ? "#fff" : "#94a3b8", border: "none", borderRadius: 8, padding: mob ? "9px 14px" : "9px 20px", cursor: "pointer", fontWeight: 700, fontSize: mob ? 13 : 14, whiteSpace: "nowrap", flexShrink: 0 }}>
             {label}
           </button>
         ))}
@@ -752,11 +774,11 @@ function Classement({ pseudo, stats, bets, joinedCommunities }) {
       )}
 
       {/* Trier par */}
-      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
-        <span style={{ fontSize: 13, color: "#64748b", marginRight: 4 }}>Trier par :</span>
-        {[["roi","📈 ROI"],["taux","🎯 Taux réussite"],["profit","💰 Profit"],["paris","🎲 Nb paris"]].map(([val, label]) => (
+      <div style={{ display: "flex", gap: 8, flexWrap: mob ? "nowrap" : "wrap", alignItems: "center", overflowX: mob ? "auto" : "visible", WebkitOverflowScrolling: "touch", scrollbarWidth: "none" }}>
+        <span style={{ fontSize: 13, color: "#64748b", marginRight: 4, whiteSpace: "nowrap", flexShrink: 0 }}>Trier :</span>
+        {[["roi","📈 ROI"],["taux","🎯 Taux"],["profit","💰 Profit"],["paris","🎲 Paris"]].map(([val, label]) => (
           <button key={val} onClick={() => setFilter(val)}
-            style={{ background: filter === val ? "#6366f1" : "#1e293b", color: filter === val ? "#fff" : "#94a3b8", border: "none", borderRadius: 8, padding: "7px 14px", cursor: "pointer", fontWeight: 600, fontSize: 13 }}>
+            style={{ background: filter === val ? "#6366f1" : "#1e293b", color: filter === val ? "#fff" : "#94a3b8", border: "none", borderRadius: 8, padding: "7px 14px", cursor: "pointer", fontWeight: 600, fontSize: 13, whiteSpace: "nowrap", flexShrink: 0 }}>
             {label}
           </button>
         ))}
@@ -764,12 +786,12 @@ function Classement({ pseudo, stats, bets, joinedCommunities }) {
 
       {/* Tableau */}
       {(mode === "general" || (mode === "communaute" && selectedCommId && joinedCommunities.length > 0)) && (
-        <div style={{ ...card, overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
+        <div style={{ ...card, overflowX: "auto", padding: mob ? "12px 0" : 20 }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: mob ? 12 : 14 }}>
             <thead>
               <tr style={{ borderBottom: "1px solid #334155" }}>
                 {["#","Joueur","Paris","Gagnés","Taux","ROI","Profit"].map(h => (
-                  <th key={h} style={{ padding: "10px 12px", textAlign: h === "#" || h === "Joueur" ? "left" : "right", color: "#64748b", fontWeight: 600, fontSize: 12 }}>{h}</th>
+                  <th key={h} style={{ padding: mob ? "8px 8px" : "10px 12px", textAlign: h === "#" || h === "Joueur" ? "left" : "right", color: "#64748b", fontWeight: 600, fontSize: mob ? 11 : 12, whiteSpace: "nowrap" }}>{h}</th>
                 ))}
               </tr>
             </thead>
@@ -779,22 +801,22 @@ function Classement({ pseudo, stats, bets, joinedCommunities }) {
                 const profColor = p.profit >= 0 ? "#10b981" : "#f43f5e";
                 return (
                   <tr key={p.pseudo} style={{ borderBottom: "1px solid #0f172a", background: p.isMe ? "#6366f10a" : "transparent" }}>
-                    <td style={{ padding: "12px 12px", fontWeight: 700, fontSize: i < 3 ? 20 : 14, color: i < 3 ? undefined : "#64748b" }}>
+                    <td style={{ padding: mob ? "8px 8px" : "12px 12px", fontWeight: 700, fontSize: i < 3 ? (mob ? 16 : 20) : (mob ? 12 : 14), color: i < 3 ? undefined : "#64748b" }}>
                       {i < 3 ? medals[i] : `#${i+1}`}
                     </td>
-                    <td style={{ padding: "12px 12px" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                        <span style={{ fontSize: 22 }}>{p.avatar}</span>
-                        <p style={{ margin: 0, fontWeight: p.isMe ? 700 : 500, color: p.isMe ? "#a5b4fc" : "#e2e8f0" }}>
-                          {p.pseudo} {p.isMe && <span style={{ fontSize: 11, color: "#6366f1", background: "#6366f122", borderRadius: 6, padding: "1px 7px", marginLeft: 4 }}>Vous</span>}
+                    <td style={{ padding: mob ? "8px 8px" : "12px 12px" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: mob ? 6 : 10 }}>
+                        <span style={{ fontSize: mob ? 16 : 22 }}>{p.avatar}</span>
+                        <p style={{ margin: 0, fontWeight: p.isMe ? 700 : 500, color: p.isMe ? "#a5b4fc" : "#e2e8f0", fontSize: mob ? 12 : 14, whiteSpace: mob ? "nowrap" : "normal" }}>
+                          {p.pseudo} {p.isMe && <span style={{ fontSize: 10, color: "#6366f1", background: "#6366f122", borderRadius: 6, padding: "1px 5px", marginLeft: 2 }}>Vous</span>}
                         </p>
                       </div>
                     </td>
-                    <td style={{ padding: "12px 12px", textAlign: "right", color: "#94a3b8" }}>{p.paris}</td>
-                    <td style={{ padding: "12px 12px", textAlign: "right", color: "#94a3b8" }}>{p.gagnes}</td>
-                    <td style={{ padding: "12px 12px", textAlign: "right", color: "#6366f1", fontWeight: 600 }}>{p.taux.toFixed(1)}%</td>
-                    <td style={{ padding: "12px 12px", textAlign: "right", fontWeight: 700, color: roiColor }}>{p.roi >= 0 ? "+" : ""}{p.roi.toFixed(1)}%</td>
-                    <td style={{ padding: "12px 12px", textAlign: "right", fontWeight: 700, color: profColor }}>{p.profit >= 0 ? "+" : ""}{p.profit.toFixed(0)} €</td>
+                    <td style={{ padding: mob ? "8px 8px" : "12px 12px", textAlign: "right", color: "#94a3b8" }}>{p.paris}</td>
+                    <td style={{ padding: mob ? "8px 8px" : "12px 12px", textAlign: "right", color: "#94a3b8" }}>{p.gagnes}</td>
+                    <td style={{ padding: mob ? "8px 8px" : "12px 12px", textAlign: "right", color: "#6366f1", fontWeight: 600 }}>{p.taux.toFixed(1)}%</td>
+                    <td style={{ padding: mob ? "8px 8px" : "12px 12px", textAlign: "right", fontWeight: 700, color: roiColor }}>{p.roi >= 0 ? "+" : ""}{p.roi.toFixed(1)}%</td>
+                    <td style={{ padding: mob ? "8px 8px" : "12px 12px", textAlign: "right", fontWeight: 700, color: profColor }}>{p.profit >= 0 ? "+" : ""}{p.profit.toFixed(0)} €</td>
                   </tr>
                 );
               })}
@@ -845,6 +867,8 @@ function genCode() { return Math.random().toString(36).substring(2, 8).toUpperCa
 
 // ─── App ──────────────────────────────────────────────────────────────────────
 export default function App() {
+  const isMob = useWindowWidth() <= 480;
+
   // ── Auth ──
   const [session, setSession] = useState(undefined); // undefined = loading
   const [profile, setProfile] = useState(null);
@@ -881,6 +905,7 @@ export default function App() {
   const [showBankrollModal, setShowBankrollModal] = useState(false);
   const [bkForm, setBkForm] = useState({ deposit: "", withdraw: "", reset: "" });
 
+  const [showCommSidebar, setShowCommSidebar] = useState(false);
   const [commView, setCommView]         = useState("home");
   const [activeChatSport, setActiveChatSport] = useState("Football");
   const [publicChats, setPublicChats]   = useState(initPublicChats);
@@ -1129,9 +1154,9 @@ export default function App() {
 
       {/* Guest mode banner */}
       {guestMode && (
-        <div style={{ position: "sticky", top: 0, zIndex: 50, background: "#1e293b", borderBottom: "1px solid #334155", padding: "10px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
-          <span style={{ fontSize: 13, color: "#94a3b8" }}>👋 Vous explorez en mode démo — Inscrivez-vous pour sauvegarder vos paris et accéder à toutes les fonctionnalités</span>
-          <button onClick={exitGuestToRegister} style={{ ...btnPrimary, padding: "6px 18px", fontSize: 13, whiteSpace: "nowrap", flexShrink: 0 }}>S'inscrire</button>
+        <div style={{ position: "sticky", top: 0, zIndex: 50, background: "#1e293b", borderBottom: "1px solid #334155", padding: "10px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+          <span style={{ fontSize: 12, color: "#94a3b8", flex: 1, minWidth: 0 }}>👋 Mode démo — Inscrivez-vous pour sauvegarder vos paris</span>
+          <button onClick={exitGuestToRegister} style={{ ...btnPrimary, padding: "6px 14px", fontSize: 13, whiteSpace: "nowrap", flexShrink: 0 }}>S'inscrire</button>
         </div>
       )}
 
@@ -1143,40 +1168,56 @@ export default function App() {
         </div>
       )}
 
-    <div style={{ background: "#0f172a", minHeight: "100vh", fontFamily: "'Inter',sans-serif", color: "#e2e8f0", padding: "24px 20px 72px" }}>
+    <div style={{ background: "#0f172a", minHeight: "100vh", fontFamily: "'Inter',sans-serif", color: "#e2e8f0", padding: isMob ? "16px 12px 100px" : "24px 20px 88px" }}>
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
 
         {/* Header */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 28 }}>
-          <div>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 2 }}>
-              <h1 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: "#f1f5f9" }}>📈 BetTracker</h1>
-              <Badge18 size={28} />
+        <div style={{ display: "flex", flexDirection: isMob ? "column" : "row", justifyContent: "space-between", alignItems: isMob ? "stretch" : "center", marginBottom: isMob ? 16 : 28, gap: isMob ? 12 : 0 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 2 }}>
+                <h1 style={{ margin: 0, fontSize: isMob ? 20 : 24, fontWeight: 700, color: "#f1f5f9" }}>📈 BetTracker</h1>
+                <Badge18 size={isMob ? 22 : 28} />
+              </div>
+              <p style={{ margin: 0, color: "#64748b", fontSize: isMob ? 11 : 13 }}>Suivi de vos paris sportifs</p>
             </div>
-            <p style={{ margin: 0, color: "#64748b", fontSize: 13 }}>Suivi de vos paris sportifs</p>
+            {/* User info (inline with title on mobile) */}
+            {isMob && (
+              <div style={{ display: "flex", alignItems: "center", gap: 6, background: "#1e293b", border: "1px solid #334155", borderRadius: 10, padding: "5px 10px", flexShrink: 0 }}>
+                <div style={{ width: 26, height: 26, borderRadius: "50%", background: guestMode ? "#475569" : "#6366f1", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 700, color: "#fff", flexShrink: 0 }}>
+                  {guestMode ? "👀" : (profile?.pseudo || pseudo || "?")[0].toUpperCase()}
+                </div>
+                <button onClick={guestMode ? exitGuestToRegister : () => supabase.auth.signOut()}
+                  style={{ background: "none", border: "none", color: guestMode ? "#6366f1" : "#64748b", cursor: "pointer", fontSize: 12, padding: 0 }}>
+                  {guestMode ? "S'inscrire" : "Déco"}
+                </button>
+              </div>
+            )}
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
             {activeTab === "dashboard" && (
               <>
-                <button onClick={() => setShowBankrollModal(true)} style={btnSecondary}>
-                  💰 Modifier ma Bankroll
+                <button onClick={() => setShowBankrollModal(true)} style={{ ...btnSecondary, flex: isMob ? 1 : undefined, justifyContent: "center", minHeight: 44 }}>
+                  💰 {isMob ? "Bankroll" : "Modifier ma Bankroll"}
                 </button>
-                <button onClick={() => { setShowForm(!showForm); setEditId(null); setForm(emptyForm); }} style={btnPrimary}>
+                <button onClick={() => { setShowForm(!showForm); setEditId(null); setForm(emptyForm); }} style={{ ...btnPrimary, flex: isMob ? 1 : undefined, justifyContent: "center", minHeight: 44 }}>
                   {showForm ? "✕ Fermer" : "+ Nouveau pari"}
                 </button>
               </>
             )}
-            {/* User info */}
-            <div style={{ display: "flex", alignItems: "center", gap: 8, background: "#1e293b", border: "1px solid #334155", borderRadius: 10, padding: "6px 12px" }}>
-              <div style={{ width: 30, height: 30, borderRadius: "50%", background: guestMode ? "#475569" : "#6366f1", display: "flex", alignItems: "center", justifyContent: "center", fontSize: guestMode ? 16 : 15, fontWeight: 700, color: "#fff", flexShrink: 0 }}>
-                {guestMode ? "👀" : (profile?.pseudo || pseudo || "?")[0].toUpperCase()}
+            {/* User info (desktop) */}
+            {!isMob && (
+              <div style={{ display: "flex", alignItems: "center", gap: 8, background: "#1e293b", border: "1px solid #334155", borderRadius: 10, padding: "6px 12px" }}>
+                <div style={{ width: 30, height: 30, borderRadius: "50%", background: guestMode ? "#475569" : "#6366f1", display: "flex", alignItems: "center", justifyContent: "center", fontSize: guestMode ? 16 : 15, fontWeight: 700, color: "#fff", flexShrink: 0 }}>
+                  {guestMode ? "👀" : (profile?.pseudo || pseudo || "?")[0].toUpperCase()}
+                </div>
+                <span style={{ fontSize: 13, fontWeight: 600, color: guestMode ? "#94a3b8" : "#e2e8f0" }}>{guestMode ? "Mode Démo" : (profile?.pseudo || pseudo)}</span>
+                <button onClick={guestMode ? exitGuestToRegister : () => supabase.auth.signOut()}
+                  style={{ background: "none", border: "1px solid #334155", borderRadius: 6, color: guestMode ? "#6366f1" : "#64748b", cursor: "pointer", fontSize: 12, padding: "3px 8px", marginLeft: 4 }}>
+                  {guestMode ? "S'inscrire" : "Déconnexion"}
+                </button>
               </div>
-              <span style={{ fontSize: 13, fontWeight: 600, color: guestMode ? "#94a3b8" : "#e2e8f0" }}>{guestMode ? "Mode Démo" : (profile?.pseudo || pseudo)}</span>
-              <button onClick={guestMode ? exitGuestToRegister : () => supabase.auth.signOut()}
-                style={{ background: "none", border: "1px solid #334155", borderRadius: 6, color: guestMode ? "#6366f1" : "#64748b", cursor: "pointer", fontSize: 12, padding: "3px 8px", marginLeft: 4 }}>
-                {guestMode ? "S'inscrire" : "Déconnexion"}
-              </button>
-            </div>
+            )}
           </div>
         </div>
 
@@ -1184,9 +1225,9 @@ export default function App() {
         {showBankrollModal && (() => {
           const currentBankroll = bankroll.starting + stats.profit;
           return (
-            <div style={{ position: "fixed", inset: 0, background: "#00000088", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center" }}
+            <div style={{ position: "fixed", inset: 0, background: "#00000088", zIndex: 1000, display: "flex", alignItems: isMob ? "flex-end" : "center", justifyContent: "center" }}
               onClick={e => { if (e.target === e.currentTarget) setShowBankrollModal(false); }}>
-              <div style={{ ...card, width: 420, border: "1px solid #334155", boxShadow: "0 24px 64px #00000066" }}>
+              <div style={{ ...card, width: isMob ? "100%" : 420, maxHeight: isMob ? "90vh" : "none", overflowY: isMob ? "auto" : "visible", border: "1px solid #334155", boxShadow: "0 24px 64px #00000066", borderRadius: isMob ? "16px 16px 0 0" : 12 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
                   <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700 }}>💰 Modifier ma Bankroll</h2>
                   <button onClick={() => setShowBankrollModal(false)} style={{ background: "none", border: "none", color: "#64748b", cursor: "pointer", fontSize: 20, lineHeight: 1 }}>✕</button>
@@ -1208,15 +1249,15 @@ export default function App() {
                 <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                   <div>
                     <label style={{ fontSize: 12, color: "#94a3b8", display: "block", marginBottom: 6 }}>➕ Dépôt (ajouter de l'argent)</label>
-                    <input type="number" min="0" step="0.01" style={inp} placeholder="Ex: 100.00" value={bkForm.deposit} onChange={e => setBkForm(f => ({ ...f, deposit: e.target.value }))} />
+                    <input type="number" min="0" step="0.01" style={{ ...inp, minHeight: 44 }} placeholder="Ex: 100.00" value={bkForm.deposit} onChange={e => setBkForm(f => ({ ...f, deposit: e.target.value }))} />
                   </div>
                   <div>
                     <label style={{ fontSize: 12, color: "#94a3b8", display: "block", marginBottom: 6 }}>➖ Retrait (retirer de l'argent)</label>
-                    <input type="number" min="0" step="0.01" style={inp} placeholder="Ex: 50.00" value={bkForm.withdraw} onChange={e => setBkForm(f => ({ ...f, withdraw: e.target.value }))} />
+                    <input type="number" min="0" step="0.01" style={{ ...inp, minHeight: 44 }} placeholder="Ex: 50.00" value={bkForm.withdraw} onChange={e => setBkForm(f => ({ ...f, withdraw: e.target.value }))} />
                   </div>
                   <div style={{ borderTop: "1px solid #334155", paddingTop: 14 }}>
                     <label style={{ fontSize: 12, color: "#f59e0b", display: "block", marginBottom: 6 }}>🔄 Reset — définir une nouvelle bankroll de départ</label>
-                    <input type="number" min="0" step="0.01" style={{ ...inp, border: "1px solid #f59e0b44" }} placeholder="Ex: 1000.00 (repart de zéro)" value={bkForm.reset} onChange={e => setBkForm(f => ({ ...f, reset: e.target.value }))} />
+                    <input type="number" min="0" step="0.01" style={{ ...inp, border: "1px solid #f59e0b44", minHeight: 44 }} placeholder="Ex: 1000.00 (repart de zéro)" value={bkForm.reset} onChange={e => setBkForm(f => ({ ...f, reset: e.target.value }))} />
                     {bkForm.reset.trim() !== "" && <p style={{ margin: "6px 0 0", fontSize: 11, color: "#f59e0b" }}>⚠️ Le reset réinitialise dépôts et retraits.</p>}
                   </div>
                   <div style={{ display: "flex", gap: 10, paddingTop: 4 }}>
@@ -1233,31 +1274,31 @@ export default function App() {
         {showForm && activeTab === "dashboard" && (
           <div style={{ ...card, marginBottom: 24, border: "1px solid #334155" }}>
             <h3 style={{ margin: "0 0 16px", fontSize: 16, color: "#a5b4fc" }}>{editId ? "✏️ Modifier le pari" : "➕ Ajouter un pari"}</h3>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 12 }}>
-              <div><label style={{ fontSize: 12, color: "#94a3b8" }}>Date</label><input type="date" style={inp} value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} /></div>
+            <div style={{ display: "grid", gridTemplateColumns: isMob ? "1fr 1fr" : "repeat(auto-fill, minmax(160px, 1fr))", gap: isMob ? 10 : 12 }}>
+              <div><label style={{ fontSize: 12, color: "#94a3b8" }}>Date</label><input type="date" style={{ ...inp, minHeight: 44 }} value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} /></div>
               <div><label style={{ fontSize: 12, color: "#94a3b8" }}>Sport</label>
-                <select style={inp} value={form.sport} onChange={e => setForm({ ...form, sport: e.target.value })}>
+                <select style={{ ...inp, minHeight: 44 }} value={form.sport} onChange={e => setForm({ ...form, sport: e.target.value })}>
                   {SPORTS.map(s => <option key={s}>{s}</option>)}
                 </select>
               </div>
-              <div style={{ gridColumn: "span 2" }}><label style={{ fontSize: 12, color: "#94a3b8" }}>Événement</label><input style={inp} placeholder="Ex: PSG vs Lyon" value={form.event} onChange={e => setForm({ ...form, event: e.target.value })} /></div>
-              <div><label style={{ fontSize: 12, color: "#94a3b8" }}>Cote</label><input type="number" step="0.01" style={inp} placeholder="1.85" value={form.cote} onChange={e => setForm({ ...form, cote: e.target.value })} /></div>
-              <div><label style={{ fontSize: 12, color: "#94a3b8" }}>Mise (€)</label><input type="number" style={inp} placeholder="50" value={form.mise} onChange={e => setForm({ ...form, mise: e.target.value })} /></div>
-              <div><label style={{ fontSize: 12, color: "#94a3b8" }}>Statut</label>
-                <select style={inp} value={form.statut} onChange={e => setForm({ ...form, statut: e.target.value })}>
+              <div style={{ gridColumn: "span 2" }}><label style={{ fontSize: 12, color: "#94a3b8" }}>Événement</label><input style={{ ...inp, minHeight: 44 }} placeholder="Ex: PSG vs Lyon" value={form.event} onChange={e => setForm({ ...form, event: e.target.value })} /></div>
+              <div><label style={{ fontSize: 12, color: "#94a3b8" }}>Cote</label><input type="number" step="0.01" style={{ ...inp, minHeight: 44 }} placeholder="1.85" value={form.cote} onChange={e => setForm({ ...form, cote: e.target.value })} /></div>
+              <div><label style={{ fontSize: 12, color: "#94a3b8" }}>Mise (€)</label><input type="number" style={{ ...inp, minHeight: 44 }} placeholder="50" value={form.mise} onChange={e => setForm({ ...form, mise: e.target.value })} /></div>
+              <div style={{ gridColumn: isMob ? "span 2" : undefined }}><label style={{ fontSize: 12, color: "#94a3b8" }}>Statut</label>
+                <select style={{ ...inp, minHeight: 44 }} value={form.statut} onChange={e => setForm({ ...form, statut: e.target.value })}>
                   {STATUTS.map(s => <option key={s}>{s}</option>)}
                 </select>
               </div>
             </div>
-            <button onClick={handleSubmit} style={{ ...btnPrimary, marginTop: 16 }}>{editId ? "Mettre à jour" : "Enregistrer"}</button>
+            <button onClick={handleSubmit} style={{ ...btnPrimary, marginTop: 16, width: isMob ? "100%" : undefined, minHeight: 44 }}>{editId ? "Mettre à jour" : "Enregistrer"}</button>
           </div>
         )}
 
         {/* Tabs */}
-        <div style={{ display: "flex", gap: 8, marginBottom: 24, flexWrap: "wrap" }}>
-          {[["dashboard","📊 Dashboard"],["classement","🏆 Classement"],["communaute","💬 Communauté"],["calculatrice","🧮 Calculatrice"]].map(([t, label]) => (
+        <div style={{ display: "flex", gap: 8, marginBottom: isMob ? 16 : 24, overflowX: "auto", WebkitOverflowScrolling: "touch", scrollbarWidth: "none", flexWrap: "nowrap", marginLeft: isMob ? -12 : 0, marginRight: isMob ? -12 : 0, paddingLeft: isMob ? 12 : 0, paddingRight: isMob ? 12 : 0 }}>
+          {[["dashboard","📊","📊 Dashboard"],["classement","🏆","🏆 Classement"],["communaute","💬","💬 Communauté"],["calculatrice","🧮","🧮 Calculatrice"]].map(([t, emoji, label]) => (
             <button key={t} onClick={() => setActiveTab(t)}
-              style={{ background: activeTab === t ? "#6366f1" : "#1e293b", color: activeTab === t ? "#fff" : "#94a3b8", border: "none", borderRadius: 8, padding: "8px 20px", cursor: "pointer", fontWeight: 600, fontSize: 14 }}>
+              style={{ background: activeTab === t ? "#6366f1" : "#1e293b", color: activeTab === t ? "#fff" : "#94a3b8", border: "none", borderRadius: 8, padding: isMob ? "10px 16px" : "8px 20px", cursor: "pointer", fontWeight: 600, fontSize: isMob ? 13 : 14, whiteSpace: "nowrap", flexShrink: 0, minHeight: 44 }}>
               {label}
             </button>
           ))}
@@ -1302,7 +1343,7 @@ export default function App() {
               );
             })()}
 
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 16, marginBottom: 24 }}>
+            <div style={{ display: "grid", gridTemplateColumns: isMob ? "1fr 1fr" : "repeat(auto-fill, minmax(180px, 1fr))", gap: isMob ? 10 : 16, marginBottom: isMob ? 16 : 24 }}>
               {[
                 { label: "Total Misé",    val: `${stats.totalMise.toFixed(0)} €`,                                             color: "#94a3b8" },
                 { label: "Profit Net",    val: `${stats.profit >= 0 ? "+" : ""}${stats.profit.toFixed(0)} €`,                 color: stats.profit >= 0 ? "#10b981" : "#f43f5e" },
@@ -1310,19 +1351,19 @@ export default function App() {
                 { label: "Taux Réussite", val: `${stats.taux} %`,                                                              color: "#6366f1" },
                 { label: "Paris gagnés",  val: `${stats.wonCount} / ${stats.doneCount}`,                                       color: "#f59e0b" },
               ].map(k => (
-                <div key={k.label} style={{ ...card, textAlign: "center" }}>
-                  <p style={{ margin: 0, fontSize: 12, color: "#64748b" }}>{k.label}</p>
-                  <p style={{ margin: "8px 0 0", fontSize: 22, fontWeight: 700, color: k.color }}>{k.val}</p>
+                <div key={k.label} style={{ ...card, textAlign: "center", padding: isMob ? "12px 8px" : 20 }}>
+                  <p style={{ margin: 0, fontSize: isMob ? 11 : 12, color: "#64748b" }}>{k.label}</p>
+                  <p style={{ margin: "6px 0 0", fontSize: isMob ? 18 : 22, fontWeight: 700, color: k.color }}>{k.val}</p>
                 </div>
               ))}
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
+            <div style={{ display: "grid", gridTemplateColumns: isMob ? "1fr" : "1fr 1fr", gap: isMob ? 12 : 16, marginBottom: 16 }}>
               <div style={card}>
                 <p style={{ margin: "0 0 12px", fontWeight: 600, fontSize: 14 }}>📈 Évolution du Bankroll</p>
-                <ResponsiveContainer width="100%" height={200}>
+                <ResponsiveContainer width="100%" height={isMob ? 150 : 200}>
                   <LineChart data={bankrollData}>
-                    <XAxis dataKey="date" tick={{ fill: "#64748b", fontSize: 11 }} />
-                    <YAxis tick={{ fill: "#64748b", fontSize: 11 }} />
+                    <XAxis dataKey="date" tick={{ fill: "#64748b", fontSize: isMob ? 10 : 11 }} />
+                    <YAxis tick={{ fill: "#64748b", fontSize: isMob ? 10 : 11 }} width={isMob ? 40 : 60} />
                     <Tooltip contentStyle={{ background: "#1e293b", border: "1px solid #334155", borderRadius: 8 }} />
                     <Line type="monotone" dataKey="bank" stroke="#6366f1" strokeWidth={2} dot={{ r: 3, fill: "#6366f1" }} />
                   </LineChart>
@@ -1330,9 +1371,9 @@ export default function App() {
               </div>
               <div style={card}>
                 <p style={{ margin: "0 0 12px", fontWeight: 600, fontSize: 14 }}>🏅 Paris par Sport</p>
-                <ResponsiveContainer width="100%" height={200}>
+                <ResponsiveContainer width="100%" height={isMob ? 150 : 200}>
                   <PieChart>
-                    <Pie data={sportData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={75} label={({ name, percent }) => `${name} ${(percent*100).toFixed(0)}%`} labelLine={false} fontSize={11}>
+                    <Pie data={sportData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={isMob ? 55 : 75} label={({ name, percent }) => `${(percent*100).toFixed(0)}%`} labelLine={false} fontSize={isMob ? 10 : 11}>
                       {sportData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
                     </Pie>
                     <Tooltip contentStyle={{ background: "#1e293b", border: "1px solid #334155", borderRadius: 8 }} />
@@ -1342,7 +1383,7 @@ export default function App() {
             </div>
             <div style={{ ...card, marginBottom: 16 }}>
               <p style={{ margin: "0 0 12px", fontWeight: 600, fontSize: 14 }}>📊 Performance par Sport (€)</p>
-              <ResponsiveContainer width="100%" height={200}>
+              <ResponsiveContainer width="100%" height={isMob ? 150 : 200}>
                 <BarChart data={perfData}>
                   <XAxis dataKey="sport" tick={{ fill: "#64748b", fontSize: 12 }} />
                   <YAxis tick={{ fill: "#64748b", fontSize: 12 }} />
@@ -1423,20 +1464,28 @@ export default function App() {
           </div>
         )}
         {activeTab === "communaute" && !guestMode && (
-          <div style={{ display: "flex", gap: 16, height: 560 }}>
+          <div style={{ display: "flex", gap: isMob ? 0 : 16, height: isMob ? "auto" : 560, flexDirection: isMob ? "column" : "row", minHeight: isMob ? 500 : undefined }}>
+            {/* Mobile sidebar toggle */}
+            {isMob && (
+              <button onClick={() => setShowCommSidebar(v => !v)}
+                style={{ ...btnSecondary, marginBottom: 8, display: "flex", alignItems: "center", gap: 8, justifyContent: "space-between", width: "100%", minHeight: 44 }}>
+                <span>☰ Menu communauté</span>
+                <span style={{ fontSize: 12 }}>{showCommSidebar ? "▲" : "▼"}</span>
+              </button>
+            )}
             {/* Sidebar */}
-            <div style={{ ...card, width: 200, flexShrink: 0, padding: 12, display: "flex", flexDirection: "column", gap: 4, overflowY: "auto" }}>
+            <div style={{ ...card, width: isMob ? "100%" : 200, flexShrink: 0, padding: 12, display: isMob ? (showCommSidebar ? "flex" : "none") : "flex", flexDirection: "column", gap: 4, overflowY: "auto", marginBottom: isMob ? 8 : 0 }}>
               {[{ id: "home", icon: "🏠", label: "Accueil" }, { id: "public", icon: "🌐", label: "Salons publics" }, { id: "mycommunities", icon: "🏘️", label: "Mes communautés" }].map(item => (
-                <button key={item.id} onClick={() => setCommView(item.id)}
-                  style={{ background: commView === item.id ? "#6366f122" : "transparent", border: commView === item.id ? "1px solid #6366f1" : "1px solid transparent", borderRadius: 8, padding: "8px 10px", cursor: "pointer", textAlign: "left", color: commView === item.id ? "#a5b4fc" : "#94a3b8", fontSize: 13, display: "flex", alignItems: "center", gap: 8 }}>
+                <button key={item.id} onClick={() => { setCommView(item.id); if (isMob) setShowCommSidebar(false); }}
+                  style={{ background: commView === item.id ? "#6366f122" : "transparent", border: commView === item.id ? "1px solid #6366f1" : "1px solid transparent", borderRadius: 8, padding: "8px 10px", cursor: "pointer", textAlign: "left", color: commView === item.id ? "#a5b4fc" : "#94a3b8", fontSize: 13, display: "flex", alignItems: "center", gap: 8, minHeight: 44 }}>
                   {item.icon} {item.label}
                 </button>
               ))}
               <div style={{ borderTop: "1px solid #334155", margin: "6px 0" }} />
               <p style={{ margin: "4px 0 6px", fontSize: 11, color: "#475569", fontWeight: 600, textTransform: "uppercase", letterSpacing: 1 }}>Mes communautés</p>
               {joinedCommunities.map(c => (
-                <button key={c.id} onClick={() => { setActiveCommunityId(c.id); setCommView("chat"); setChatInput(""); }}
-                  style={{ background: (commView === "chat" && activeCommunityId === c.id) ? c.color+"22" : "transparent", border: (commView === "chat" && activeCommunityId === c.id) ? `1px solid ${c.color}` : "1px solid transparent", borderRadius: 8, padding: "7px 10px", cursor: "pointer", textAlign: "left", color: (commView === "chat" && activeCommunityId === c.id) ? "#e2e8f0" : "#94a3b8", fontSize: 13, display: "flex", alignItems: "center", gap: 8 }}>
+                <button key={c.id} onClick={() => { setActiveCommunityId(c.id); setCommView("chat"); setChatInput(""); if (isMob) setShowCommSidebar(false); }}
+                  style={{ background: (commView === "chat" && activeCommunityId === c.id) ? c.color+"22" : "transparent", border: (commView === "chat" && activeCommunityId === c.id) ? `1px solid ${c.color}` : "1px solid transparent", borderRadius: 8, padding: "7px 10px", cursor: "pointer", textAlign: "left", color: (commView === "chat" && activeCommunityId === c.id) ? "#e2e8f0" : "#94a3b8", fontSize: 13, display: "flex", alignItems: "center", gap: 8, minHeight: 44 }}>
                   <span style={{ width: 10, height: 10, borderRadius: "50%", background: c.color, flexShrink: 0 }} />
                   <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.name}</span>
                 </button>
@@ -1456,7 +1505,7 @@ export default function App() {
             </div>
 
             {/* Main */}
-            <div style={{ ...card, flex: 1, display: "flex", flexDirection: "column", padding: 0, overflow: "hidden" }}>
+            <div style={{ ...card, flex: 1, display: "flex", flexDirection: "column", padding: 0, overflow: "hidden", minHeight: isMob ? 420 : undefined }}>
 
               {commView === "home" && (
                 <div style={{ padding: 28, overflowY: "auto" }}>
