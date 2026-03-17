@@ -6,8 +6,8 @@ const card      = { background: "#1e293b", borderRadius: 12, padding: 28 };
 const inp       = { background: "#0f172a", border: "1px solid #334155", borderRadius: 8, padding: "10px 14px", color: "#e2e8f0", width: "100%", fontSize: 14, boxSizing: "border-box" };
 const btnPrimary = { background: "#6366f1", color: "#fff", border: "none", borderRadius: 8, padding: "11px 0", cursor: "pointer", fontWeight: 700, fontSize: 15, width: "100%" };
 
-export default function AuthPage() {
-  const [mode, setMode]         = useState("login"); // "login" | "register" | "reset"
+export default function AuthPage({ onGuestMode, initialMode = "login" }) {
+  const [mode, setMode]         = useState(initialMode); // "login" | "register" | "reset"
   const [email, setEmail]       = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm]   = useState("");
@@ -176,6 +176,22 @@ export default function AuthPage() {
             )}
           </div>
         </div>
+
+        {/* Guest mode */}
+        {onGuestMode && (
+          <div style={{ textAlign: "center", marginTop: 20 }}>
+            <div style={{ borderTop: "1px solid #1e293b", paddingTop: 18 }}>
+              <p style={{ margin: "0 0 12px", fontSize: 13, color: "#475569" }}>Pas encore prêt à vous inscrire ?</p>
+              <button onClick={onGuestMode}
+                style={{ background: "none", border: "1px solid #334155", borderRadius: 8, color: "#94a3b8", cursor: "pointer", fontSize: 14, padding: "10px 24px", width: "100%", transition: "all .15s" }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = "#6366f1"; e.currentTarget.style.color = "#a5b4fc"; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = "#334155"; e.currentTarget.style.color = "#94a3b8"; }}>
+                👀 Découvrir sans compte
+              </button>
+            </div>
+          </div>
+        )}
+
       </div>
     </div>
     </>

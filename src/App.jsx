@@ -810,6 +810,15 @@ function Classement({ pseudo, stats, bets, joinedCommunities }) {
 // ─── Data initiale ────────────────────────────────────────────────────────────
 const initialBets = [];
 
+const DEMO_BETS = [
+  { id: "d1", date: "2026-03-10", sport: "Football",   event: "PSG vs Marseille",        cote: 1.85, mise: 50,  statut: "Gagné"    },
+  { id: "d2", date: "2026-03-11", sport: "Tennis",     event: "Djokovic vs Alcaraz",      cote: 2.10, mise: 30,  statut: "Perdu"    },
+  { id: "d3", date: "2026-03-12", sport: "Basketball", event: "Lakers vs Warriors",       cote: 1.65, mise: 40,  statut: "Gagné"    },
+  { id: "d4", date: "2026-03-14", sport: "Football",   event: "Real Madrid vs Barcelone", cote: 3.20, mise: 25,  statut: "Gagné"    },
+  { id: "d5", date: "2026-03-15", sport: "Rugby",      event: "France vs Angleterre",     cote: 1.90, mise: 60,  statut: "Perdu"    },
+  { id: "d6", date: "2026-03-16", sport: "MMA",        event: "Jones vs Aspinall",        cote: 1.75, mise: 35,  statut: "En cours" },
+];
+
 const initPublicChats = {
   Football:   [
     { id: 1, user: "BetKing77",  avatar: "🦁", time: "14:32", text: "PSG ce soir ça sent la victoire, cote à 1.65 je fonce 💪" },
@@ -839,6 +848,9 @@ export default function App() {
   // ── Auth ──
   const [session, setSession] = useState(undefined); // undefined = loading
   const [profile, setProfile] = useState(null);
+  const [guestMode, setGuestMode] = useState(() => sessionStorage.getItem("guestMode") === "1");
+  const [authMode, setAuthMode]   = useState("login");
+  const [toast, setToast]         = useState(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setSession(data.session ?? null));
@@ -904,6 +916,20 @@ export default function App() {
     }
   }, [session, loadUserData]);
 
+  // ── Guest mode: load demo data ──
+  useEffect(() => {
+    if (guestMode) {
+      setBets(DEMO_BETS);
+      setBankroll({ starting: 1000 });
+      setPseudo("Visiteur");
+    }
+  }, [guestMode]);
+
+  const showToast = (msg) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 3500);
+  };
+
   useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [activeCommunityId, commView, publicChats, communities]);
 
   const emptyForm = { date: "", sport: "Football", event: "", cote: "", mise: "", statut: "En cours" };
@@ -960,19 +986,21 @@ export default function App() {
     const payload = { ...form, cote: Number(form.cote), mise: Number(form.mise) };
     if (editId !== null) {
       setBets(bets.map(b => b.id === editId ? { ...payload, id: editId } : b));
-      if (userId) await supabase.from("bets").update({ ...payload, user_id: userId }).eq("id", editId);
+      if (!guestMode && userId) await supabase.from("bets").update({ ...payload, user_id: userId }).eq("id", editId);
       setEditId(null);
     } else {
       const newBet = { ...payload, id: Date.now() };
       setBets(prev => [...prev, newBet]);
-      if (userId) await supabase.from("bets").insert({ ...payload, id: newBet.id, user_id: userId });
+      if (!guestMode && userId) await supabase.from("bets").insert({ ...payload, id: newBet.id, user_id: userId });
+      if (guestMode) showToast("Créez un compte pour sauvegarder vos paris !");
     }
     setForm(emptyForm); setShowForm(false);
   };
   const handleEdit   = b => { setForm({ ...b }); setEditId(b.id); setShowForm(true); };
   const handleDelete = async (id) => {
     setBets(bets.filter(b => b.id !== id));
-    if (session?.user?.id) await supabase.from("bets").delete().eq("id", id).eq("user_id", session.user.id);
+    if (!guestMode && session?.user?.id) await supabase.from("bets").delete().eq("id", id).eq("user_id", session.user.id);
+    if (guestMode) showToast("Créez un compte pour sauvegarder vos paris !");
   };
 
   const handleBankrollSave = async () => {
@@ -982,7 +1010,7 @@ export default function App() {
     const isReset  = bkForm.reset.trim() !== "" && !isNaN(resetVal);
     const newStarting = isReset ? resetVal : bankroll.starting + deposit - withdraw;
     setBankroll({ starting: newStarting });
-    if (session?.user?.id) {
+    if (!guestMode && session?.user?.id) {
       await supabase.from("bankroll").upsert({
         user_id: session.user.id,
         starting_amount: newStarting,
@@ -1077,12 +1105,44 @@ export default function App() {
       </div>
     );
   }
-  if (!session) return <AuthPage />;
+  if (!session && !guestMode) return (
+    <AuthPage
+      initialMode={authMode}
+      onGuestMode={() => {
+        sessionStorage.setItem("guestMode", "1");
+        setGuestMode(true);
+        setAuthMode("login");
+      }}
+    />
+  );
+
+  const exitGuestToRegister = () => {
+    sessionStorage.removeItem("guestMode");
+    setGuestMode(false);
+    setAuthMode("register");
+  };
 
   return (
     <>
       <AgeVerificationModal />
       <PreventionBanner />
+
+      {/* Guest mode banner */}
+      {guestMode && (
+        <div style={{ position: "sticky", top: 0, zIndex: 50, background: "#1e293b", borderBottom: "1px solid #334155", padding: "10px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
+          <span style={{ fontSize: 13, color: "#94a3b8" }}>👋 Vous explorez en mode démo — Inscrivez-vous pour sauvegarder vos paris et accéder à toutes les fonctionnalités</span>
+          <button onClick={exitGuestToRegister} style={{ ...btnPrimary, padding: "6px 18px", fontSize: 13, whiteSpace: "nowrap", flexShrink: 0 }}>S'inscrire</button>
+        </div>
+      )}
+
+      {/* Toast notification */}
+      {toast && (
+        <div style={{ position: "fixed", bottom: 24, left: "50%", transform: "translateX(-50%)", zIndex: 999, background: "#1e293b", border: "1px solid #6366f1", borderRadius: 10, padding: "12px 24px", color: "#e2e8f0", fontSize: 14, fontWeight: 600, boxShadow: "0 8px 32px #0008", display: "flex", alignItems: "center", gap: 10 }}>
+          <span>💾</span> {toast}
+          <button onClick={() => { exitGuestToRegister(); }} style={{ marginLeft: 12, background: "#6366f1", color: "#fff", border: "none", borderRadius: 6, padding: "4px 12px", cursor: "pointer", fontSize: 13, fontWeight: 700 }}>Créer un compte</button>
+        </div>
+      )}
+
     <div style={{ background: "#0f172a", minHeight: "100vh", fontFamily: "'Inter',sans-serif", color: "#e2e8f0", padding: "24px 20px 72px" }}>
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
 
@@ -1108,13 +1168,13 @@ export default function App() {
             )}
             {/* User info */}
             <div style={{ display: "flex", alignItems: "center", gap: 8, background: "#1e293b", border: "1px solid #334155", borderRadius: 10, padding: "6px 12px" }}>
-              <div style={{ width: 30, height: 30, borderRadius: "50%", background: "#6366f1", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 15, fontWeight: 700, color: "#fff", flexShrink: 0 }}>
-                {(profile?.pseudo || pseudo || "?")[0].toUpperCase()}
+              <div style={{ width: 30, height: 30, borderRadius: "50%", background: guestMode ? "#475569" : "#6366f1", display: "flex", alignItems: "center", justifyContent: "center", fontSize: guestMode ? 16 : 15, fontWeight: 700, color: "#fff", flexShrink: 0 }}>
+                {guestMode ? "👀" : (profile?.pseudo || pseudo || "?")[0].toUpperCase()}
               </div>
-              <span style={{ fontSize: 13, fontWeight: 600, color: "#e2e8f0" }}>{profile?.pseudo || pseudo}</span>
-              <button onClick={() => supabase.auth.signOut()}
-                style={{ background: "none", border: "1px solid #334155", borderRadius: 6, color: "#64748b", cursor: "pointer", fontSize: 12, padding: "3px 8px", marginLeft: 4 }}>
-                Déconnexion
+              <span style={{ fontSize: 13, fontWeight: 600, color: guestMode ? "#94a3b8" : "#e2e8f0" }}>{guestMode ? "Mode Démo" : (profile?.pseudo || pseudo)}</span>
+              <button onClick={guestMode ? exitGuestToRegister : () => supabase.auth.signOut()}
+                style={{ background: "none", border: "1px solid #334155", borderRadius: 6, color: guestMode ? "#6366f1" : "#64748b", cursor: "pointer", fontSize: 12, padding: "3px 8px", marginLeft: 4 }}>
+                {guestMode ? "S'inscrire" : "Déconnexion"}
               </button>
             </div>
           </div>
@@ -1354,7 +1414,15 @@ export default function App() {
         {activeTab === "classement" && <Classement pseudo={pseudo} stats={stats} bets={bets} joinedCommunities={joinedCommunities} />}
 
         {/* COMMUNAUTÉ */}
-        {activeTab === "communaute" && (
+        {activeTab === "communaute" && guestMode && (
+          <div style={{ ...card, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: 300, gap: 16, textAlign: "center", border: "1px solid #334155" }}>
+            <p style={{ fontSize: 48, margin: 0 }}>💬</p>
+            <h2 style={{ margin: 0, fontSize: 20, color: "#f1f5f9" }}>Rejoignez la communauté</h2>
+            <p style={{ margin: 0, color: "#64748b", maxWidth: 380 }}>Connectez-vous pour rejoindre la communauté, discuter avec d'autres parieurs et partager vos pronostics.</p>
+            <button onClick={exitGuestToRegister} style={{ ...btnPrimary, padding: "10px 28px", fontSize: 15 }}>Créer un compte gratuit</button>
+          </div>
+        )}
+        {activeTab === "communaute" && !guestMode && (
           <div style={{ display: "flex", gap: 16, height: 560 }}>
             {/* Sidebar */}
             <div style={{ ...card, width: 200, flexShrink: 0, padding: 12, display: "flex", flexDirection: "column", gap: 4, overflowY: "auto" }}>
