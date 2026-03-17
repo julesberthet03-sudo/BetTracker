@@ -5,7 +5,7 @@ import AuthPage from "./AuthPage";
 import { AgeVerificationModal, PreventionBanner, Badge18 } from "./Legal";
 
 const SPORTS = ["Football", "Tennis", "Basketball", "Rugby", "Baseball", "MMA", "Autre"];
-const STATUTS = ["Gagné", "Perdu", "En cours"];
+const STATUTS = ["Gagné", "Perdu"];
 const COLORS = ["#6366f1", "#22d3ee", "#f59e0b", "#10b981", "#f43f5e", "#a78bfa", "#34d399"];
 const SPORT_ICONS = { Football: "⚽", Tennis: "🎾", Basketball: "🏀", Rugby: "🏉", Baseball: "⚾", MMA: "🥊", Autre: "🎲" };
 const COMMUNITY_COLORS = ["#6366f1","#10b981","#f59e0b","#f43f5e","#22d3ee","#a78bfa","#34d399","#fb923c"];
@@ -893,7 +893,7 @@ export default function App() {
 
   // ── Data ──
   const [bets, setBets]             = useState(initialBets);
-  const [form, setForm]             = useState({ date: "", sport: "Football", event: "", cote: "", mise: "", statut: "En cours" });
+  const [form, setForm]             = useState({ date: new Date().toISOString().split("T")[0], sport: "Football", event: "", cote: "", mise: "", statut: "Gagné" });
   const [showForm, setShowForm]     = useState(false);
   const [editId, setEditId]         = useState(null);
   const [filterSport, setFilterSport] = useState("Tous");
@@ -957,7 +957,7 @@ export default function App() {
 
   useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [activeCommunityId, commView, publicChats, communities]);
 
-  const emptyForm = { date: "", sport: "Football", event: "", cote: "", mise: "", statut: "En cours" };
+  const emptyForm = { date: new Date().toISOString().split("T")[0], sport: "Football", event: "", cote: "", mise: "", statut: "Gagné" };
 
   const stats = useMemo(() => {
     const done = bets.filter(b => b.statut !== "En cours");
