@@ -106,12 +106,25 @@ export default function AuthPage({ onGuestMode, initialMode = "login" }) {
       <div style={{ width: "100%", maxWidth: 420 }}>
 
         {/* Logo */}
-        <div style={{ textAlign: "center", marginBottom: 32 }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, marginBottom: 8 }}>
+        <div style={{ textAlign: "center", marginBottom: 24 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, marginBottom: 16 }}>
             <BetcrewLogo size={100} />
             <Badge18 size={32} />
           </div>
-          <p style={{ margin: 0, fontSize: 14, color: "#64748b" }}>Suivi intelligent de vos paris sportifs</p>
+
+          {/* Tagline */}
+          <p style={{ margin: "0 0 16px", fontSize: 18, fontWeight: 700, color: "#f1f5f9", letterSpacing: -0.3 }}>
+            La plateforme des parieurs intelligents
+          </p>
+
+          {/* Feature badges */}
+          <div style={{ display: "flex", justifyContent: "center", gap: 8, flexWrap: "wrap" }}>
+            {[["📊", "Suivi de bankroll"], ["🧮", "Calculatrices pro"], ["👥", "Communauté"]].map(([icon, label]) => (
+              <span key={label} style={{ display: "inline-flex", alignItems: "center", gap: 5, background: "#1e293b", border: "1px solid #334155", borderRadius: 20, padding: "5px 12px", fontSize: 12, color: "#94a3b8", fontWeight: 500 }}>
+                {icon} {label}
+              </span>
+            ))}
+          </div>
         </div>
 
         <div style={card}>
