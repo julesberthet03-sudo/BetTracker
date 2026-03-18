@@ -2,6 +2,26 @@ import { useState } from "react";
 import { supabase } from "./supabase";
 import { AgeVerificationModal, PreventionBanner, Badge18 } from "./Legal";
 
+const BetcrewLogo = ({ size = 40 }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="circleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#1e90ff"/>
+        <stop offset="100%" stopColor="#00b4d8"/>
+      </linearGradient>
+    </defs>
+    <circle cx="50" cy="50" r="48" fill="none" stroke="url(#circleGrad)" strokeWidth="3"/>
+    <polygon points="20,70 45,35 60,50 80,20" fill="none" stroke="#22c55e" strokeWidth="4" strokeLinejoin="round"/>
+    <polygon points="75,20 85,20 85,30" fill="#22c55e"/>
+    <rect x="30" y="55" width="12" height="15" rx="2" fill="#60a5fa" opacity="0.8"/>
+    <rect x="58" y="48" width="14" height="22" rx="2" fill="#60a5fa" opacity="0.6"/>
+    <ellipse cx="44" cy="78" rx="10" ry="4" fill="#3b82f6" opacity="0.7"/>
+    <ellipse cx="44" cy="75" rx="10" ry="4" fill="#60a5fa" opacity="0.8"/>
+    <ellipse cx="62" cy="78" rx="10" ry="4" fill="#3b82f6" opacity="0.7"/>
+    <ellipse cx="62" cy="75" rx="10" ry="4" fill="#60a5fa" opacity="0.8"/>
+  </svg>
+);
+
 const card      = { background: "#1e293b", borderRadius: 12, padding: 28 };
 const inp       = { background: "#0f172a", border: "1px solid #334155", borderRadius: 8, padding: "10px 14px", color: "#e2e8f0", width: "100%", fontSize: 14, boxSizing: "border-box" };
 const btnPrimary = { background: "#6366f1", color: "#fff", border: "none", borderRadius: 8, padding: "11px 0", cursor: "pointer", fontWeight: 700, fontSize: 15, width: "100%" };
@@ -87,9 +107,8 @@ export default function AuthPage({ onGuestMode, initialMode = "login" }) {
 
         {/* Logo */}
         <div style={{ textAlign: "center", marginBottom: 32 }}>
-          <p style={{ fontSize: 48, margin: "0 0 8px" }}>📈</p>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, marginBottom: 4 }}>
-            <h1 style={{ margin: 0, fontSize: 28, fontWeight: 800, color: "#f1f5f9" }}>BetTracker</h1>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, marginBottom: 8 }}>
+            <BetcrewLogo size={100} />
             <Badge18 size={32} />
           </div>
           <p style={{ margin: 0, fontSize: 14, color: "#64748b" }}>Suivi intelligent de vos paris sportifs</p>

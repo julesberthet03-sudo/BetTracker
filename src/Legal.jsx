@@ -1,5 +1,25 @@
 import { useState } from "react";
 
+const BetcrewLogo = ({ size = 40 }) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="circleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#1e90ff"/>
+        <stop offset="100%" stopColor="#00b4d8"/>
+      </linearGradient>
+    </defs>
+    <circle cx="50" cy="50" r="48" fill="none" stroke="url(#circleGrad)" strokeWidth="3"/>
+    <polygon points="20,70 45,35 60,50 80,20" fill="none" stroke="#22c55e" strokeWidth="4" strokeLinejoin="round"/>
+    <polygon points="75,20 85,20 85,30" fill="#22c55e"/>
+    <rect x="30" y="55" width="12" height="15" rx="2" fill="#60a5fa" opacity="0.8"/>
+    <rect x="58" y="48" width="14" height="22" rx="2" fill="#60a5fa" opacity="0.6"/>
+    <ellipse cx="44" cy="78" rx="10" ry="4" fill="#3b82f6" opacity="0.7"/>
+    <ellipse cx="44" cy="75" rx="10" ry="4" fill="#60a5fa" opacity="0.8"/>
+    <ellipse cx="62" cy="78" rx="10" ry="4" fill="#3b82f6" opacity="0.7"/>
+    <ellipse cx="62" cy="75" rx="10" ry="4" fill="#60a5fa" opacity="0.8"/>
+  </svg>
+);
+
 // ─── Age Verification Modal ───────────────────────────────────────────────────
 export function AgeVerificationModal() {
   const [visible, setVisible] = useState(
@@ -31,8 +51,7 @@ export function AgeVerificationModal() {
       }}>
         {/* Logo + badge */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, marginBottom: 24 }}>
-          <span style={{ fontSize: 40 }}>📈</span>
-          <span style={{ fontSize: 26, fontWeight: 800, color: "#f1f5f9" }}>BetTracker</span>
+          <BetcrewLogo size={70} />
           <Badge18 size={36} />
         </div>
 
